@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { GetStaticProps } from "next";
 
 interface IBlogPost {
   title: string;
@@ -92,14 +93,19 @@ export async function getStaticPaths() {
   return { paths, fallback: false };
 }
 
-// TODO: find out the proper params type
-export async function getStaticProps({ params }: any) {
-  const res = await fetch(`http://localhost:8000/api/v2/pages/${params.id}`);
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const res = await fetch(`http://localhost:8000/api/v2/pages/${params?.id}`);
   const data = await res.json();
+
+  // if (!data) {
+  //   return {
+  //     notFound: true,
+  //   }
+  // }
 
   return {
     props: data,
   };
-}
+};
 
 export default BlogPost;
