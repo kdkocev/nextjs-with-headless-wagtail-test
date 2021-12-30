@@ -1,5 +1,9 @@
+import type { ReactElement } from "react";
+
 import Image from "next/image";
 import { GetStaticProps } from "next";
+
+import Layout from "../../components/layout";
 
 interface IBlogPost {
   title: string;
@@ -34,7 +38,7 @@ interface IBlogPost {
   >;
 }
 
-const BlogPost: React.FC<IBlogPost> = ({ title, author, date, body }) => {
+const BlogPost = ({ title, author, date, body }: IBlogPost) => {
   return (
     <div>
       <h1>Blog Post page</h1>
@@ -77,6 +81,10 @@ const BlogPost: React.FC<IBlogPost> = ({ title, author, date, body }) => {
   );
 };
 
+BlogPost.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
+
 // This function gets called at build time
 export async function getStaticPaths() {
   // Call an external API endpoint to get posts
@@ -90,7 +98,9 @@ export async function getStaticPaths() {
 
   // We'll pre-render only these paths at build time.
   // { fallback: false } means other routes should 404.
-  return { paths, fallback: false };
+  // { fallback: blocking } will server-render pages
+  // on-demand if the path doesn't exist.
+  return { paths, fallback: "blocking" };
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
